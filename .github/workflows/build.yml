@@ -1,4 +1,4 @@
-on: [push, pull_request, workflow_dispatch]
+on: [workflow_dispatch]
 
 name: Build
 
@@ -44,3 +44,13 @@ jobs:
         with:
           name: firmware
           path: bt60.uf2
+
+      - name: West Build (settings_reset)
+        run: west build -s zmk/app -b "bt60@2.0.0//zmk" -DSHIELD=settings_reset -- -DZMK_CONFIG="${GITHUB_WORKSPACE}/config"
+      - name: Rename settings_reset.uf2
+        run: cp build/zephyr/zmk.uf2 settings_reset.uf2
+      - name: Archive (settings_reset)
+        uses: actions/upload-artifact@v4
+        with:
+          name: settings_reset
+          path: settings_reset.uf2
